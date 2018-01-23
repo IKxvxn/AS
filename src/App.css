@@ -1,0 +1,9 @@
+.UnDone{
+    background-color: rgba(238, 255, 0, 0.493);
+    width: 25%;
+}
+
+.Done{
+    background-color: rgba(0, 75, 0, 0.596);
+    width: 25%;
+}

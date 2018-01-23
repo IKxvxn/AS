@@ -5,7 +5,9 @@ class Componente extends Component {
       return (
 
         this.props.ToDo.map(function(Item) {
-            return <li>{Item.Value}</li>
+          if (Item.Done==false){
+            return <li class="UnDone" id={Item.Key}>{Item.Value}</li>}
+          return <li class="Done" id={Item.Key}>{Item.Value}</li>
          })        
       );
     }

@@ -4,7 +4,7 @@ import Componente from'./Componente.js'
 class List extends Component {
     render() {
       return (
-            <ul><Componente ToDo = {this.props.ToDo}/></ul>
+            <ul onClick={this.props.remove}><Componente ToDo = {this.props.ToDo} remove = {this.handleRemove}/></ul>
       );
     }
   }
