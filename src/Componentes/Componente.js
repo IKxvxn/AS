@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 class Componente extends Component {
     render() {
@@ -12,5 +13,14 @@ class Componente extends Component {
       );
     }
   }
+
+  Componente.propTypes = {
+    ToDo:PropTypes.array,
+    remove:PropTypes.func
+ }
+ Componente.defaultProps = {
+  ToDo:[],
+  remove: () => {}
+}
 
 export default Componente;

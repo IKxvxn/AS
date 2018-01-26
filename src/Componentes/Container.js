@@ -1,66 +1,91 @@
 import React, { Component } from 'react';
 import List from './List.js'
+
+import { connect } from 'react-redux'
+import TodoList from './Reducer_ToDo'
+import { addTodo, loadTodo, doneTodo, deleteTodo } from './Actions'
+import { log } from 'util';
+
 const uuid = require('uuid/v1')
+
+
 
 class Container extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      ToDo: [{ Value: "Madurar", Key: "0", Done: true }, { Value: "No consumir el oxígeno de otros", Key: "1", Done: false }],
+      ToDo: [],
       newToDo: ""
     };
     this.handleToDoChange = this.handleToDoChange.bind(this);
     this.handleRemove = this.handleRemove.bind(this);
     this.onAdd = this.onAdd.bind(this);
-    this.removeAux = this.removeAux.bind(this);
   }
   handleToDoChange(e) {
     this.setState({ newToDo: e.target.value })
   }
 
-  onAdd() {
-    let newToDo = {
-      Value: this.state.newToDo,
-      Key: uuid(),
-      Done: false
-    }
-    this.setState({ ToDo: [...this.state.ToDo, newToDo] })
+  onAdd = () => {
+    console.log(this.state.newToDo)
+    this.props.addTodo(this.state.newToDo)
+    this.setState({ newToDo: '' })
   }
 
   handleRemove(e) {
     let id = e.target.getAttribute('id')
-    let refToDo = this.state.ToDo;
-    let removeAux = this.removeAux
+    let removeAux = this.removeAux;
+    let doneTodo = this.props.doneTodo
+    let deleteTodo = this.props.deleteTodo
+    let x = 0
 
-    refToDo.map(function (item) {
+    this.props.ToDo.map(function (item) {
       if (item.Key == id) {
-        if (item.Done == false) { item.Done = true; }
-        else {removeAux(item.Key)}
+        if (item.Done == false) {doneTodo(x)}
+        else {deleteTodo(x)}
       }
+      x++
     });
-    this.setState({ ToDo: [...this.state.ToDo] })
 
-  }
-
-  removeAux(Key){
-    this.state.ToDo=this.state.ToDo.filter(function(item) { 
-      return item.Key !== Key;  
-   });
   }
 
   render() {
+    console.log(this.props.todos)
     return (
       <div>
         <h1>TodoList</h1>
         <input type="text" name="ToDo" id="InputTODO" value={this.state.newToDo} onChange={this.handleToDoChange} />
         <input type="button" value="Add" onClick={this.onAdd} />
-        <List ToDo={this.state.ToDo} remove={this.handleRemove} />
+        <List ToDo={this.props.ToDo} remove={this.handleRemove} />
       </div>
     );
   }
 
+  componentDidMount(){
+    fetch('http://localhost:2000/ToDo').then((data) => {
+        //console.log(data)
+        return data.json()
+      }).then((todos) => {
+        this.props.loadTodo(todos)
+      })
 }
 
-export default Container;
+}
+
+function mapStateToProps(state) {
+  return {
+    ToDo: state.ToDo
+  }
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    addTodo: value => dispatch(addTodo(value)),
+    loadTodo: value => dispatch(loadTodo(value)),
+    doneTodo: id => dispatch(doneTodo(id)),
+    deleteTodo: id => dispatch(deleteTodo(id))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Container)
 
 
